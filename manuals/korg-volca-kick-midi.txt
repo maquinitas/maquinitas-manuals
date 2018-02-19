@@ -1,0 +1,63 @@
+	    KORG volca kick MIDI Implementation          Version 1.00 (2016.07.29)
+
+
+1.TRANSMITTED DATA
+
+  No message is transmitted.
+  (The volca kick is not equipped with a MIDI Out jack.)
+
+
+2.RECOGNIZED RECEIVE DATA
+
+2-1 CHANNEL MESSAGES                                    [H]:Hex, [D]:Decimal
++--------+---------+-------------+-----------------------------------------+
+| Status | Second  |   Third     |           Description                   |
+|   [H]  | [H] [D] | [H]   [D]   |                                         |
++--------+---------+-------------+-----------------------------------------+
+|   8n   | kk (kk) | vv    (vv)  | Note Off  vv=0~127                    *1|
+|   9n   | kk (kk) | 00    (00)  | Note Off                              *1|
+|   9n   | kk (kk) | vv    (vv)  | Note On  vv=1~127                     *1|
+|   Bn   | 28 (40) | vv    (vv)  | PULSE COLOUR                          *1|
+|   Bn   | 29 (41) | vv    (vv)  | PULSE LEVEL                           *1|
+|   Bn   | 2A (42) | vv    (vv)  | AMP ATTACK                            *1|
+|   Bn   | 2B (43) | vv    (vv)  | AMP DECAY                             *1|
+|   Bn   | 2C (44) | vv    (vv)  | DRIVE                                 *1|
+|   Bn   | 2D (45) | vv    (vv)  | TONE                                  *1|
+|   Bn   | 2E (46) | vv    (vv)  | RESONATOR PITCH                       *1|
+|   Bn   | 2F (47) | vv    (vv)  | RESONATOR BEND                        *1|
+|   Bn   | 30 (48) | vv    (vv)  | RESONATOR TIME                        *1|
+|   Bn   | 31 (49) | vv    (vv)  | ACCENT                                *1|
++--------+---------+-------------+-----------------------------------------+
+
+ n  : MIDI Channel = 0 ~ F
+ kk : Note# = [H] [D]   [H] [D]
+              00 (00) ~ 7F (127)
+ vv : Value = [H] [D]   [H] [D]
+              00 (00) ~ 7F (127)
+
+ *1 : This message is recognized when the "MIDI RX Short Message" is set to "On".
+
+
+2-2 SYSTEM COMMON MESSAGES                       [H]:Hex, [B]:Binary
++-----------+-----------+-----------+------------------------------+
+| Status[H] | Second[B] | Third[B]  | Description                  |
+|-----------+-----------+-----------+------------------------------+
+|    F2     | 0xxx xxxx | 0xxx pppp | Song Position Pointer        |
++-----------+-----------+-----------+------------------------------+
+
+ pppp : 0~15 = STEP 1 ~ STEP 16
+    x : ignored
+
+
+2-3 SYSTEM REALTIME MESSAGES                         [H]:Hex
++-----------+----------------------------------------------+
+| Status[H] | Description                                  |
++-----------+----------------------------------------------+
+|    F8     | Timing Clock                               *2|
+|    FA     | Start                                      *2|
+|    FB     | Contiune                                   *2|
+|    FC     | Stop                                       *2|
+|    FE     | Active Sensing                               |
++-----------+----------------------------------------------+
+
+ *2 : This message is recognized when the "MIDI Clock Src" is set to "Auto".
