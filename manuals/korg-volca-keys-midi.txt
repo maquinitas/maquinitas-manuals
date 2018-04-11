@@ -1,0 +1,87 @@
+	    KORG volca keys MIDI Implementation          Revision 0.01 (2013.06.23)
+
+
+1.TRANSMITTED DATA
+
+  No message is transmitted.
+  (The volca keys is not equipped with a MIDI Out jack.)
+
+
+2.RECOGNIZED RECEIVE DATA
+
+2-1 CHANNEL MESSAGES        [H]:Hex,  [D]:Decimal
++--------+---------+-------------+-----------------------------------------+
+| Status | Second  |   Third     |           Description                   |
+| [Hex]  | [H] [D] | [H]   [D]   |                                         |
++--------+---------+-------------+-----------------------------------------+
+|   8n   | kk (kk) | vv    (vv)  | Note Off  vv=0~127                    *1|
+|   9n   | kk (kk) | 00    (00)  | Note Off                              *1|
+|   9n   | kk (kk) | vv    (vv)  | Note On  vv=1~127                     *1|
+|   Bn   | 05 (05) | vv    (vv)  | PORTAMENTO                            *1|
+|   Bn   | 0B (11) | vv    (vv)  | EXPRESSION                            *1|
+|   Bn   | 28 (40) | vv    (vv)  | VOICE                               *1*2|
+|   Bn   | 29 (41) | vv    (vv)  | OCTAVE                              *1*3|
+|   Bn   | 2A (42) | vv    (vv)  | DETUNE                                *1|
+|   Bn   | 2B (43) | vv    (vv)  | VCO EG INT                            *1|
+|   Bn   | 2C (44) | vv    (vv)  | CUTOFF                                *1|
+|   Bn   | 2D (45) | vv    (vv)  | VCF EG INT                            *1|
+|   Bn   | 2E (46) | vv    (vv)  | LFO RATE                              *1|
+|   Bn   | 2F (47) | vv    (vv)  | LFO PITCH INT                         *1|
+|   Bn   | 30 (48) | vv    (vv)  | LFO CUTOFF INT                        *1|
+|   Bn   | 31 (49) | vv    (vv)  | EG ATTACK                             *1|
+|   Bn   | 32 (50) | vv    (vv)  | EG DECAY/RELEASE                      *1|
+|   Bn   | 33 (51) | vv    (vv)  | EG SUSTAIN                            *1|
+|   Bn   | 34 (52) | vv    (vv)  | DELAY TIME                            *1|
+|   Bn   | 35 (53) | vv    (vv)  | DELAY FEEDBACK                        *1|
+|   En   | bb (bb) | bb    (bb)  | Pitch Bender Change                     |
++--------+---------+-------------+-----------------------------------------+
+
+ n  : MIDI Channel = 0 ~ F
+ vv : Value
+
+ *1 : This message is recognized when the "MIDI RX Short Message" is set to "On".
+ *2 : VOICE
+      [H] [D]   [H] [D]
+      00 (00) ~ 0C (12)  : POLY
+      0D (13) ~ 25 (37)  : UNISON
+      26 (38) ~ 3E (62)  : OCTAVE
+      3F (63) ~ 57 (87)  : FIFTH
+      58 (88) ~ 70 (112) : UNISON RING
+      71 (113)~ 7F (127) : POLY RING
+
+ *3 : OCTAVE
+      [H] [D]   [H] [D]
+      00 (00) ~ 15 (21)  : 32'
+      16 (22) ~ 2B (43)  : 16'
+      2C (44) ~ 41 (65)  : 8'
+      42 (66) ~ 57 (87)  : 4'
+      58 (88) ~ 6D (109) : 2'
+      6E (110)~ 7F (127) : 1'
+
+
+2-2.SYSTEM COMMON MESSAGES
++-----------+-----------+-----------+------------------------------+
+| Status[H] | Second[B] | Third[B]  | Description                  |
+|-----------+-----------+-----------+------------------------------+
+|    F2     | 0xxx xxxx | 0xxx pppp | Song Position Pointer        |
++-----------+-----------+-----------+------------------------------+
+
+ pppp : 0~15 = STEP 1 ~ STEP 16
+    x : ignored
+
+
+2-3 SYSTEM REALTIME MESSAGES
++-----------+----------------------------------------------+
+| Status[H] | Description                                  |
++-----------+----------------------------------------------+
+|    F8     | Timing Clock                               *4|
+|    FA     | Start                                      *4|
+|    FB     | Contiune                                   *4|
+|    FC     | Stop                                       *4|
+|    FE     | Active Sensing                               |
++-----------+----------------------------------------------+
+
+ *4 : This message is recognized when the "MIDI Clock Src" is set to "Auto".
+
+
+

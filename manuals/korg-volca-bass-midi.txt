@@ -1,0 +1,74 @@
+	    KORG volca bass MIDI Implementation          Revision 0.01 (2013.06.23)
+
+
+1.TRANSMITTED DATA
+
+  No message is transmitted.
+  (The volca bass is not equipped with a MIDI Out jack.)
+
+
+2.RECOGNIZED RECEIVE DATA
+
+2-1 CHANNEL MESSAGES        [H]:Hex,  [D]:Decimal
++--------+---------+-------------+-----------------------------------------+
+| Status | Second  |   Third     |           Description                   |
+| [Hex]  | [H] [D] | [H]   [D]   |                                         |
++--------+---------+-------------+-----------------------------------------+
+|   8n   | kk (kk) | vv    (vv)  | Note Off  vv=0~127                    *1|
+|   9n   | kk (kk) | 00    (00)  | Note Off                              *1|
+|   9n   | kk (kk) | vv    (vv)  | Note On  vv=1~127                     *1|
+|   Bn   | 05 (05) | vv    (vv)  | SLIDE TIME                            *1|
+|   Bn   | 0B (11) | vv    (vv)  | EXPRESSION                            *1|
+|   Bn   | 28 (40) | vv    (vv)  | OCTAVE                              *1*2|
+|   Bn   | 29 (41) | vv    (vv)  | LFO RATE                              *1|
+|   Bn   | 2A (42) | vv    (vv)  | LFO INT                               *1|
+|   Bn   | 2B (43) | vv    (vv)  | VCO PITCH 1                           *1|
+|   Bn   | 2C (44) | vv    (vv)  | VCO PITCH 2                           *1|
+|   Bn   | 2D (45) | vv    (vv)  | VCO PITCH 3                           *1|
+|   Bn   | 2E (46) | vv    (vv)  | EG ATTACK                             *1|
+|   Bn   | 2F (47) | vv    (vv)  | EG DECAT/RELEASE                      *1|
+|   Bn   | 30 (48) | vv    (vv)  | CUTOFF EG INT                         *1|
+|   Bn   | 31 (49) | vv    (vv)  | GATE TIME                             *1|
+|   En   | bb (bb) | bb    (bb)  | Pitch Bender Change                     |
++--------+---------+-------------+-----------------------------------------+
+
+ n  : MIDI Channel = 0 ~ F
+ vv : Value
+
+ *1 : This message is recognized when the "MIDI RX Short Message" is set to "On".
+ *2 : OCTAVE
+      [H] [D]   [H] [D]
+      00 (00) ~ 15 (21)  : oct 1
+      16 (22) ~ 2B (43)  : oct 2
+      2C (44) ~ 41 (65)  : oct 3
+      42 (66) ~ 57 (87)  : oct 4
+      58 (88) ~ 6D (109) : oct 5
+      6E (110)~ 7F (127) : oct 6
+
+
+2-2.SYSTEM COMMON MESSAGES
++-----------+-----------+-----------+------------------------------+
+| Status[H] | Second[B] | Third[B]  | Description                  |
+|-----------+-----------+-----------+------------------------------+
+|    F2     | 0xxx xxxx | 0xxx pppp | Song Position Pointer        |
++-----------+-----------+-----------+------------------------------+
+
+ pppp : 0~15 = STEP 1 ~ STEP 16
+    x : ignored
+
+
+2-3 SYSTEM REALTIME MESSAGES
++-----------+----------------------------------------------+
+| Status[H] | Description                                  |
++-----------+----------------------------------------------+
+|    F8     | Timing Clock                               *3|
+|    FA     | Start                                      *3|
+|    FB     | Contiune                                   *3|
+|    FC     | Stop                                       *3|
+|    FE     | Active Sensing                               |
++-----------+----------------------------------------------+
+
+ *3 : This message is recognized when the "MIDI Clock Src" is set to "Auto".
+
+
+
