@@ -1,0 +1,1100 @@
+	    KORG minilogue Implementation         Revision 1.10 (2016.07.10)
+
+1.TRANSMITTED DATA
+
+1-1 CHANNEL MESSAGES            [H]:Hex,  [D]:Decimal
+
++--------+---------+-------------+-----------------------------------------+
+| Status | Second  |   Third     |           Description                   |
+| [Hex]  | [H] [D] | [H]   [D]   |                                         |
++--------+---------+-------------+-----------------------------------------+
+|   8n   | kk (kk) | 40    (64)  | Note Off                              *1|
+|   9n   | kk (kk) | vv    (vv)  | Note On  vv=1~127                     *1|
+|   Bn   | 00 (00) | vv    (vv)  | Bank Select (MSB) vv=0                *1|
+|   Bn   | 10 (16) | vv    (vv)  | AMP EG ATTACK (vv=0~127)              *1|
+|   Bn   | 11 (17) | vv    (vv)  | AMP EG DECAY (vv=0~127)               *1|
+|   Bn   | 12 (18) | vv    (vv)  | AMP EG SUSTAIN (vv=0~127)             *1|
+|   Bn   | 13 (19) | vv    (vv)  | AMP EG RELEASE (vv=0~127)             *1|
+|   Bn   | 14 (20) | vv    (vv)  | EG ATTACK (vv=0~127)                  *1|
+|   Bn   | 15 (21) | vv    (vv)  | EG DECAY (vv=0~127)                   *1|
+|   Bn   | 16 (22) | vv    (vv)  | EG SUSTAIN (vv=0~127)                 *1|
+|   Bn   | 17 (23) | vv    (vv)  | EG RELEASE (vv=0~127)                 *1|
+|   Bn   | 18 (24) | vv    (vv)  | LFO RATE (vv=0~127)                   *1|
+|   Bn   | 1a (26) | vv    (vv)  | LFO INT (vv=0~127)                    *1|
+|   Bn   | 1b (27) | vv    (vv)  | VOICE MODE DEPTH (vv=0~127)           *1|
+|   Bn   | 1d (29) | vv    (vv)  | DELAY HI PASS CUTOFF (vv=0~127)       *1|
+|   Bn   | 1e (30) | vv    (vv)  | DELAY TIME (vv=0~127)                 *1|
+|   Bn   | 1f (31) | vv    (vv)  | DELAY FEEDBACK (vv=0~127)             *1|
+|   Bn   | 20 (32) | vv    (vv)  | Bank Select (LSB) vv=0~1              *1|
+|   Bn   | 21 (33) | vv    (vv)  | NOISE LEVEL (vv=0~127)                *1|
+|   Bn   | 22 (34) | vv    (vv)  | VCO 1 PITCH (vv=0~127)                *1|
+|   Bn   | 23 (35) | vv    (vv)  | VCO 2 PITCH (vv=0~127)                *1|
+|   Bn   | 24 (36) | vv    (vv)  | VCO 1 SHAPE (vv=0~127)                *1|
+|   Bn   | 25 (37) | vv    (vv)  | VCO 2 SHAPE (vv=0~127)                *1|
+|   Bn   | 27 (39) | vv    (vv)  | VCO 1 LEVEL (vv=0~127)                *1|
+|   Bn   | 28 (40) | vv    (vv)  | VCO 2 LEVEL (vv=0~127)                *1|
+|   Bn   | 29 (41) | vv    (vv)  | VCO 2 CROSS MOD DEPTH (vv=0~127)      *1|
+|   Bn   | 2a (42) | vv    (vv)  | VCO 2 PITCH EG INT (vv=0~127)         *1|
+|   Bn   | 2b (43) | vv    (vv)  | CUTOFF (vv=0~127)                     *1|
+|   Bn   | 2c (44) | vv    (vv)  | RESONANCE (vv=0~127)                  *1|
+|   Bn   | 2d (45) | vv    (vv)  | CUTOFF EG INT (vv=0~127)              *1|
+|   Bn   | 30 (48) | vv    (vv)  | VCO 1 OCTAVE (vv=0,42,84,127)     *2-1*1|
+|   Bn   | 31 (49) | vv    (vv)  | VCO 2 OCTAVE (vv=0,42,84,127)     *2-1*1|
+|   Bn   | 32 (50) | vv    (vv)  | VCO 1 WAVE (vv=0,64,127)          *2-2*1|
+|   Bn   | 33 (51) | vv    (vv)  | VCO 2 WAVE (vv=0,64,127)          *2-2*1|
+|   Bn   | 38 (56) | vv    (vv)  | LFO TARGET (vv=0,64,127)          *2-3*1|
+|   Bn   | 39 (57) | vv    (vv)  | LFO EG (vv=0,64,127)              *2-4*1|
+|   Bn   | 3a (58) | vv    (vv)  | LFO WAVE (vv=0,64,127)            *2-5*1|
+|   Bn   | 50 (80) | vv    (vv)  | SYNC (vv=0,127)                   *2-6*1|
+|   Bn   | 51 (81) | vv    (vv)  | RING (vv=0,127)                   *2-7*1|
+|   Bn   | 52 (82) | vv    (vv)  | CUTOFF VELOCITY (vv=0,64,127)     *2-8*1|
+|   Bn   | 53 (83) | vv    (vv)  | CUTOFF KEYBOARD TRACK(vv=0,64,127)*2-9*1|
+|   Bn   | 54 (84) | vv    (vv)  | CUTOFF TYPE (vv=0,127)           *2-10*1|
+|   Bn   | 58 (88) | vv    (vv)  | DELAY OUTPUT ROUTING(vv=0,64,127)*2-11*1|
+|   Cn   | pp (pp) | --    (--)  | Program Change (pp=0~99)              *1|
+|   En   | bb (bb) | bb    (bb)  | Pitch Bender Change                   *1|
++--------+---------+-------------+-----------------------------------------+
+
+ *1 : This message is transmitted when the "Enable Tx MIDI" is set to "On".
+ *2-1  : VCO OCTAVE:16',8',4',2' = vv:0,42,84,127
+ *2-2  : VCO WAVE:SQR,TRI,SAW = vv:0,64,127
+ *2-3  : LFO TARGET:CUTOFF,SHAPE,PITCH = vv:0,64,127
+ *2-4  : LFO EG:OFF,RATE,INT = vv:0,64,127
+ *2-5  : LFO WAVE:SQR,TRI,SAW = vv:0,64,127
+ *2-6  : SYNC:Off,On = vv:0,127
+ *2-7  : RING:Off,On = vv:0,127
+ *2-8  : CUTOFF VELOCITY:0%,50%,100% = vv:0,64,127
+ *2-9  : CUTOFF KEYBOARD TRACK:0%,50%,100% = vv:0,64,127
+ *2-10 : CUTOFF TYPE:2 POLE,4 POLE = vv:0,127
+ *2-11 : DELAY OUTPUT ROUTING:BYPASS, POST HPF, PRE HPF = vv:0,64,127
+
+
+1-2 SYSTEM REALTIME MESSAGES
++-----------+---------------------------------------------+
+| Status[H] | Description                                 |
++-----------+---------------------------------------------+
+|    F8     | Timing Clock                                |
+|    FA     | Start                                       |
+|    FC     | Stop                                        |
+|    FE     | Active Sensing                              |
++-----------+---------------------------------------------+
+
+
+1-3 UNIVERSAL SYSTEM EXCLUSIVE MESSAGES
+
+ DEVICE INQUIRY REPLY
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7E    | Non Realtime Message                           |
+|   0g    | MIDI Global Channel  ( Device ID )             |
+|   06    | General Information                            |
+|   02    | Identity Reply                                 |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   2c    | minilogue  ID        ( Family ID   (LSB))      |
+|   01    |                      ( Family ID   (MSB))      |
+|   00    |                      ( Member ID   (LSB))      |
+|   00    |                      ( Member ID   (MSB))      |
+|   xx    |                      ( Minor Ver.  (LSB))      |
+|   xx    |                      ( Minor Ver.  (MSB))      |
+|   xx    |                      ( Major Ver.  (LSB))      |
+|   xx    |                      ( Major Ver.  (MSB))      |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+  This message is transmitted whenever a INQUIRY MESSAGE REQUEST is received.
+
+
+1-4 SYSTEM EXCLUSIVE MESSAGES
++-------------+-------------------------------------+------+
+| Function ID |    Description/Function             |      |
+|    [Hex]    |                                     |  *3  |
++-------------+-------------------------------------+------+
+|     40      | CURRENT PROGRAM DATA DUMP           | R,D  |
+|     4C      | PROGRAM DATA DUMP (1 PROG)          | R,D  |
+|     51      | GLOBAL DATA DUMP                    | R,D  |
+|             |                                     |      |
+|     26      | DATA FORMAT ERROR                   | E    |
+|     23      | DATA LOAD COMPLETED                 | E    |
+|     24      | DATA LOAD ERROR                     | E    |
++-------------+-------------------------------------+------+
+
+ *3 : Transmitted when
+      R  : Request message is received.
+      D  : Data dump from MIDI dump page.
+      E  : Exclusive message is received.
+
+
+1-5 SEARCH DEVICE REPLY
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   50    | Search Device                                  |
+|   01    | Reply                                          |
+|   fg    | gggg:MIDI Global Channel  ( Device ID )        |
+|(00fgggg)| f   :MIDI FILTER "SystemEx" parameter DIS      |
+|   dd    | Echo Back ID                                   |
+|   2c    | minilogue ID         ( Family ID   (LSB))      |
+|   01    |                      ( Family ID   (MSB))      |
+|   00    |                      ( Member ID   (LSB))      |
+|   00    |                      ( Member ID   (MSB))      |
+|   xx    |                      ( Minor Ver.  (LSB))      |
+|   xx    |                      ( Minor Ver.  (MSB))      |
+|   xx    |                      ( Major Ver.  (LSB))      |
+|   xx    |                      ( Major Ver.  (MSB))      |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+  g : MIDI Channel = 0 ~ F :Global Channel
+  f : MIDI FILTER "SystemEx" parameter ENA/DIS = 0/1
+  dd : Echo Back ID = copy from SEARCH DEVICE REQUEST message.
+
+  This message is transmitted whenever a SEARCH DEVICE REQUEST is received.
+
+
+
+2.RECOGNIZED RECEIVE DATA
+
+2-1 CHANNEL MESSAGES
+
++--------+---------+-------------+-----------------------------------------+
+| Status | Second  |   Third     |           Description                   |
+| [Hex]  | [H] [D] | [H]   [D]   |                                         |
++--------+---------+-------------+-----------------------------------------+
+|   8n   | kk (kk) | vv    (vv)  | Note Off  vv=0~127                    *4|
+|   9n   | kk (kk) | 00    (00)  | Note Off                              *4|
+|   9n   | kk (kk) | vv    (vv)  | Note On  vv=1~127                     *4|
+|   Bn   | 00 (00) | vv    (vv)  | Bank Select (MSB) vv=0                *4|
+|   Bn   | 10 (16) | vv    (vv)  | AMP EG ATTACK (vv=0~127)              *4|
+|   Bn   | 11 (17) | vv    (vv)  | AMP EG DECAY (vv=0~127)               *4|
+|   Bn   | 12 (18) | vv    (vv)  | AMP EG SUSTAIN (vv=0~127)             *4|
+|   Bn   | 13 (19) | vv    (vv)  | AMP EG RELEASE (vv=0~127)             *4|
+|   Bn   | 14 (20) | vv    (vv)  | EG ATTACK (vv=0~127)                  *4|
+|   Bn   | 15 (21) | vv    (vv)  | EG DECAY (vv=0~127)                   *4|
+|   Bn   | 16 (22) | vv    (vv)  | EG SUSTAIN (vv=0~127)                 *4|
+|   Bn   | 17 (23) | vv    (vv)  | EG RELEASE (vv=0~127)                 *4|
+|   Bn   | 18 (24) | vv    (vv)  | LFO RATE (vv=0~127)                   *4|
+|   Bn   | 1a (26) | vv    (vv)  | LFO INT (vv=0~127)                    *4|
+|   Bn   | 1b (27) | vv    (vv)  | VOICE MODE DEPTH (vv=0~127)           *4|
+|   Bn   | 1d (29) | vv    (vv)  | DELAY HI PASS CUTOFF (vv=0~127)       *4|
+|   Bn   | 1e (30) | vv    (vv)  | DELAY TIME (vv=0~127)                 *4|
+|   Bn   | 1f (31) | vv    (vv)  | DELAY FEEDBACK (vv=0~127)             *4|
+|   Bn   | 20 (32) | vv    (vv)  | Bank Select (LSB) vv=0~1              *4|
+|   Bn   | 21 (33) | vv    (vv)  | NOISE LEVEL (vv=0~127)                *4|
+|   Bn   | 22 (34) | vv    (vv)  | VCO 1 PITCH (vv=0~127)                *4|
+|   Bn   | 23 (35) | vv    (vv)  | VCO 2 PITCH (vv=0~127)                *4|
+|   Bn   | 24 (36) | vv    (vv)  | VCO 1 SHAPE (vv=0~127)                *4|
+|   Bn   | 25 (37) | vv    (vv)  | VCO 2 SHAPE (vv=0~127)                *4|
+|   Bn   | 27 (39) | vv    (vv)  | VCO 1 LEVEL (vv=0~127)                *4|
+|   Bn   | 28 (40) | vv    (vv)  | VCO 2 LEVEL (vv=0~127)                *4|
+|   Bn   | 29 (41) | vv    (vv)  | VCO 2 CROSS MOD DEPTH (vv=0~127)      *4|
+|   Bn   | 2a (42) | vv    (vv)  | VCO 2 PITCH EG INT (vv=0~127)         *4|
+|   Bn   | 2b (43) | vv    (vv)  | CUTOFF (vv=0~127)                     *4|
+|   Bn   | 2c (44) | vv    (vv)  | RESONANCE (vv=0~127)                  *4|
+|   Bn   | 2d (45) | vv    (vv)  | CUTOFF EG INT (vv=0~127)              *4|
+|   Bn   | 30 (48) | vv    (vv)  | VCO 1 OCTAVE (vv=0~127)           *5-1*4|
+|   Bn   | 31 (49) | vv    (vv)  | VCO 2 OCTAVE (vv=0~127)           *5-1*4|
+|   Bn   | 32 (50) | vv    (vv)  | VCO 1 WAVE (vv=0~127)             *5-2*4|
+|   Bn   | 33 (51) | vv    (vv)  | VCO 2 WAVE (vv=0~127)             *5-2*4|
+|   Bn   | 38 (56) | vv    (vv)  | LFO TARGET (vv=0~127)             *5-3*4|
+|   Bn   | 39 (57) | vv    (vv)  | LFO EG (vv=0~127)                 *5-4*4|
+|   Bn   | 3a (58) | vv    (vv)  | LFO WAVE (vv=0~127)               *5-5*4|
+|   Bn   | 50 (80) | vv    (vv)  | SYNC (vv=0~127)                   *5-6*4|
+|   Bn   | 51 (81) | vv    (vv)  | RING (vv=0~127)                   *5-7*4|
+|   Bn   | 52 (82) | vv    (vv)  | CUTOFF VELOCITY (vv=0~127)        *5-8*4|
+|   Bn   | 53 (83) | vv    (vv)  | CUTOFF KEYBOARD TRACK(vv=0~127)   *5-9*4|
+|   Bn   | 54 (84) | vv    (vv)  | CUTOFF TYPE (vv=0~127)           *5-10*4|
+|   Bn   | 58 (88) | vv    (vv)  | DELAY OUTPUT ROUTING(vv=0~127)   *5-11*4|
+|   Bn   | 78 (120)| 00    (00)  | All Sound Off                         *4|
+|   Bn   | 7a (122)| vv    (vv)  | Local Sw (v=0~127)                    *4|
+|   Bn   | 7b (123)| 00    (00)  | All Note Off                          *4|
+|   Cn   | pp (pp) | --    (--)  | Program Change (pp=0~99)              *4|
+|   En   | bb (bb) | bb    (bb)  | Pitch Bender Change                   *4|
++--------+---------+-------------+-----------------------------------------+
+
+ *4 : This message is recognized when the "Enable Rx MIDI" is set to "On".
+ *5-1  : vv:0~31,32~63,64~95,96~127 = VCO OCTAVE:16',8',4',2'
+ *5-2  : vv:0~42,43~85,86~127 = VCO WAVE:SQR,TRI,SAW
+ *5-3  : vv:0~42,43~85,86~127 = TARGET:CUTOFF,SHAPE,PITCH
+ *5-4  : vv:0~42,43~85,86~127 = LFO EG:OFF,RATE,INT
+ *5-5  : vv:0~42,43~85,86~127 = LFO WAVE:SQR,TRI,SAW
+ *5-6  : vv:0~63,64~127 = SYNC:Off,On
+ *5-7  : vv:0~63,64~127 = RING:Off,On
+ *5-8  : vv:0~42,43~85,86~127 = CUTOFF VELOCITY:0%,50%,100%
+ *5-9  : vv:0~42,43~85,86~127 = CUTOFF KEYBOARD TRACK:0%,50%,100%
+ *5-10 : vv:0~63,64~127 = CUTOFF TYPE:2 POLE,4 POLE
+ *5-11 : vv:0~42,43~85,86~127 = DELAY OUTPUT ROUTING:BYPASS,POST HPF, PRE HPF
+
+
+2-2 SYSTEM REALTIME MESSAGES
++-----------+---------------------------------------------+
+| Status[H] | Description                                 |
++-----------+---------------------------------------------+
+|    F8     | Timing Clock                             *6 |
+|    FA     | Start                                    *6 |
+|    FB     | Continue                                 *6 |
+|    FC     | Stop                                     *6 |
+|    FE     | Active Sensing                              |
++-----------+---------------------------------------------+
+
+ *6 :This message is recognized when the "Clock" is set to "Auto(USB)" or "Auto(MIDI)".
+
+
+2-3 UNIVERSAL SYSTEM EXCLUSIVE MESSAGE ( NON REALTIME )
+
+ DEVICE INQUIRY MESSAGE REQUEST
++---------+------------------------------------------------+
+| Byte[H] |    Description                                 |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7E    | Non Realtime Message                           |
+|   nn    | MIDI Channel (Device ID)                       |
+|   06    | General Information                            |
+|   01    | Identity Request                               |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+
+ nn : MIDI Channel = 0 ~ F :Global Channel
+                   = 7F    :Any Channel
+
+
+2-4 SYSTEM EXCLUSIVE MESSAGE
++-------------+--------------------------------------------+
+| Function ID |               Function                     |
+|    [Hex]    |                                            |
++-------------+--------------------------------------------+
+|     10      | CURRENT PROGRAM DATA DUMP REQUEST          |
+|     1C      | PROGRAM DATA DUMP REQUEST (1 PROG)         |
+|     0E      | GLOBAL DATA DUMP REQUEST                   |
+|             |                                            |
+|     40      | CURRENT PROGRAM DATA DUMP                  |
+|     4C      | PROGRAM DATA DUMP (1 PROG)                 |
+|     51      | GLOBAL DATA DUMP                           |
+|             |                                            |
++-------------+--------------------------------------------+
+
+
+2-5 SEARCH DEVICE REQUEST
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   50    | Search Device                                  |
+|   00    | Request                                        |
+|   dd    | Echo Back ID                                   |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------
+
+ Receive this message, and transmits SEARCH DEVICE REPLY message
+ including copied Echo Back ID.
+
+
+
+MIDI EXCLUSIVE FORMAT   (R:Receive, T:Transmit)
+
+(1) CURRENT PROGRAM DATA DUMP REQUEST                              R
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0001 0000 (10) | CURRENT PROGRAM DATA DUMP REQUEST      10H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message, and transmits Func=40 or Func=24 message.
+
+
+(2) PROGRAM DATA DUMP REQUEST (1 PROG)                             R
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0001 1100 (1C) | PROGRAM DATA DUMP REQUEST              1CH       |
+| 0ppp pppp (pp) | Source Program No.(LSB bit  7~0)                 |
+| 0000 000p (PP) | Source Program No.(MSB bit    8)                 |
+| 0000 0000 (00) |                                                  |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message, and transmits Func=4C or Func=24 message.
+
+
+(3) GLOBAL DATA DUMP REQUEST                                       R
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0000 1110 (0E) | GLOBAL DATA DUMP REQUEST               0EH       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message, and transmits Func=51 or Func=24 message.
+
+
+(4) CURRENT PROGRAM DATA DUMP                                    R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0100 0000 (40) | CURRENT PROGRAM DATA DUMP              40H       |
+| 0ddd dddd (dd) | Data                                  (NOTE 1,3) |
+|     :          |  :                                               |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message & data, save them to Edit Buffer and transmits Func=23 or Func=24 message.
+ Receive Func=10 message, and transmits this message & data from Edit Buffer.
+ When "Program Dump" is executed, transmit this message & data from Edit Buffer.
+
+
+(5) PROGRAM DATA DUMP (1 PROG)                                   R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0100 1100 (4C) | PROGRAM DATA DUMP                      4CH       |
+| 0ppp pppp (pp) | Program No.(LSB bit  6~0)                        |
+| 0000 000p (PP) | Program No.(MSB bit    7)                        |
+| 0ddd dddd (dd) | Data                                  (NOTE 1,3) |
+|     :          |  :                                               |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message & data, save them to Internal Memory and transmits Func=23 or Func=24 message.
+ Receive Func=1C message, and transmits this message & data from Internal Memory.
+ When "All Dump" is executed, transmit this message & data from Internal Memory.
+
+
+(6) GLOBAL DATA DUMP                                             R/T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0101 0001 (51) | GLOBAL DATA DUMP                       51H       |
+| 0ddd dddd (dd) | Data                                  (NOTE 2,3) |
+|     :          |  :                                               |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ Receive this message & data, save them to Internal Memory and transmits Func=23 or Func=24 message.
+ Receive Func=0E message, and transmits this message & data from Internal Memory.
+ When "All Dump" is executed, transmit this message & data from Internal Memory.
+
+
+(7) RECEIVE DATA FORMAT ERROR                                      T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0010 0110 (26) | DATA FORMAT ERROR                      26H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When found an error in the received message (ex.data length), transmits this message.
+
+
+(8) DATA LOAD COMPLETED (ACK)                                      T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0010 0011 (23) | DATA LOAD COMPLETED                    23H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When DATA LOAD,PROCESSING have been completed, transmits this message.
+
+
+(9) DATA LOAD ERROR (NAK)                                          T
++----------------+--------------------------------------------------+
+|     Byte       |             Description                          |
++----------------+--------------------------------------------------+
+| F0,42,3g,      | EXCLUSIVE HEADER                                 |
+|    00,01,2c    |                                                  |
+| 0010 0100 (24) | DATA LOAD ERROR                        24H       |
+| 1111 0111 (F7) | EOX                                              |
++----------------+--------------------------------------------------+
+
+ When DATA LOAD,PROCESSING have not been completed, transmits this message.
+
+
+ NOTE 1: CURRENT PROGRAM DATA (IN CURRENT BUFFER) DUMP FORMAT
+	 & PROGRAM DATA (IN INTERNAL MEMORY) DUMP FORMAT
+	 448Bytes       = 7*64      -> 8*64         => 512Bytes
+	 (Refer TABLE 2)
+
+ NOTE 2: GLOBAL DATA (IN INTERNAL MEMORY) DUMP FORMAT
+	 96Bytes        = 7*13+5    -> 8*13+(5+1)   => 110Bytes
+	 (Refer TABLE 1)
+
+ NOTE 3: The dump data conversion
+
+   DATA ( 1Set = 8bit x 7Byte )
+   b7     ~      b0   b7     ~      b0   b7   ~~    b0   b7     ~      b0
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+   | | | | | | | | |  | | | | | | | | |  | | |    | | |  | | | | | | | | |
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+         7n+0               7n+1          7n+2 ~~ 7n+5         7n+6
+
+    MIDI DATA ( 1Set = 7bit x 8Byte )
+      b7b7b7b7b7b7b7     b6    ~     b0     b6 ~~    b0     b6    ~     b0
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+   |0| | | | | | | |  |0| | | | | | | |  |0| |    | | |  |0| | | | | | | |
+   +-+-+-+-+-+-+-+-+  +-+-+-+-+-+-+-+-+  +-+-+-~~-+-+-+  +-+-+-+-+-+-+-+-+
+   7n+6,5,4,3,2,1,0         7n+0          7n+1 ~~ 7n+5         7n+6
+
+
+
+TABLE 1 : GLOBAL PARAMETER
++-------+-------+---------+-----------------------------------------+
+| Offset|  Bit  |  Range  |  Description                            |
++-------+-------+---------+-----------------------------------------+
+|  0~3  |       | ASCII   |  'GLOB'                                 |
++-------+-------+---------+-----------------------------------------+
+|   4   |       | -50~50  |  Master Tune               -50~+50 cent |
++-------+-------+---------+-----------------------------------------+
+|   5   |       | -12~12  |  Transpose                 -12~+12 Note |
++-------+-------+---------+-----------------------------------------+
+|   6   |       |   0~8   |  Velocity Curve               *note G1  |
++-------+-------+---------+-----------------------------------------+
+|   7   |       |   0~2   |  Knob Mode                    *note G2  |
++-------+-------+---------+-----------------------------------------+
+|   8   |       |   0,1   |  Audio In                    0,1=Off,On |
++-------+-------+---------+-----------------------------------------+
+|   9   |       |   0~2   |  Clock Source                 *note G3  |
++-------+-------+---------+-----------------------------------------+
+|  10   |       |   0,1   |  Sync In Unit    0,1=16th Note,8th Note |
++-------+-------+---------+-----------------------------------------+
+|  11   |       |   0,1   |  Sync Out Polarity        0,1=Rise,Fall |
++-------+-------+---------+-----------------------------------------+
+|  12   |       |   0,1   |  Sync In Polarity         0,1=Rise,Fall |
++-------+-------+---------+-----------------------------------------+
+|  13   |       |   0,1   |  Sync Out Unit   0,1=16th Note,8th Note |
++-------+-------+---------+-----------------------------------------+
+| 14~15 |       |         |  Reserved                               |
++-------+-------+---------+-----------------------------------------+
+|  16   |       |   0,1   |  MIDI Route            0,1=USB+MIDI,USB |
++-------+-------+---------+-----------------------------------------+
+|  17   |       |  0~15   |  MIDI ch                   0~15=1~16 Ch |
++-------+-------+---------+-----------------------------------------+
+|  18   |       |   0,1   |  Local SW                    0,1=Off,On |
++-------+-------+---------+-----------------------------------------+
+|  19   |       |   0,1   |  Enable Rx Short             0,1=Off,On |
++-------+-------+---------+-----------------------------------------+
+|  20   |       |   0,1   |  Enable Tx Short             0,1=Off,On |
++-------+-------+---------+-----------------------------------------+
+| 21~23 |       |         |  Reserved                               |
++-------+-------+---------+-----------------------------------------+
+|  24   |       |   0~9   |  Brightness                    0~9=1~10 |
++-------+-------+---------+-----------------------------------------+
+|  25   |       |   0,1   |  Auto Power Off              0,1=Off,On |
++-------+-------+---------+-----------------------------------------+
+|  26   |       |   1~2   |  Parameter Disp          1,2=Normal,All |
++-------+-------+---------+-----------------------------------------+
+|  27   |       |   0,1   |  Oscilloscope        0,1=Disable,Enable |
++-------+-------+---------+-----------------------------------------+
+| 28~63 |       |         |  Reserved                               |
++-------+-------+---------+-----------------------------------------+
+|  64   |       |   0~199 |  Favorite 1         0~199=Program 1~200 |
+|  65   |       |   0~199 |  Favorite 2         0~199=Program 1~200 |
+|  :    |       |         |                                         |
+|  71   |       |   0~199 |  Favorite 8         0~199=Program 1~200 |
++-------+-------+---------+-----------------------------------------+
+| 72~95 |       |         |  Reserved                               |
++-------+-------+---------+-----------------------------------------+
+
+*note G1 (Velocity Curve)
+     0 : Type 1
+     1 : Type 2
+     2 : Type 3
+     3 : Type 4
+     4 : Type 5
+     5 : Type 6
+     6 : Type 7
+     7 : Type 8
+     8 : Const 127
+
+*note G2 (Knob Mode)
+     0 : Jump
+     1 : Catch
+     2 : Scale
+
+*note G3 (Clock Source)
+     0 : Auto(USB)
+     1 : Auto(MIDI)
+     2 : Internal
+
+
+TABLE 2 : PROGRAM PARAMETER
++-------+-------+---------+---------------------------------------------+
+| Offset|  Bit  |  Range  |  Description                                |
++-------+-------+---------+---------------------------------------------+
+|  0~3  |       |  ASCII  |  'PROG'                                     |
++-------+-------+---------+---------------------------------------------+
+|  4~15 |       |  ASCII  |  PROGRAM NAME [12]                          |
++-------+-------+---------+---------------------------------------------+
+| 16~19 |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  20   |  0~7  |         |  VCO 1 PITCH (bit2~9)     	    *note P1,P2 |
++-------+-------+---------+---------------------------------------------+
+|  21   |  0~7  |         |  VCO 1 SHAPE (bit2~9)              *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  22   |  0~7  |         |  VCO 2 PITCH (bit2~9)           *note P1,P2 |
++-------+-------+---------+---------------------------------------------+
+|  23   |  0~7  |         |  VCO 2 SHAPE (bit2~9)              *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  24   |  0~7  |         |  CROSS MOD DEPTH (bit2~9)          *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  25   |  0~7  |         |  VCO 2 PITCH EG INT (bit2~9)    *note P1,P3 |
++-------+-------+---------+---------------------------------------------+
+|  26   |  0~7  |         |  VCO 1 LEVEL (bit2~9)              *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  27   |  0~7  |         |  VCO 2 LEVEL (bit2~9)              *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  28   |  0~7  |         |  NOISE LEVEL (bit2~9)              *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  29   |  0~7  |         |  CUTOFF (bit2~9)                   *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  30   |  0~7  |         |  RESONANCE (bit2~9)                *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  31   |  0~7  |         |  CUTOFF EG INT (bit2~9)         *note P1,P4 |
++-------+-------+---------+---------------------------------------------+
+|  32   |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  33   |  0~7  |  0~127  |  Amp Velocity                               |
++-------+-------+---------+---------------------------------------------+
+|  34   |  0~7  |         |  AMP EG ATTACK (bit2~9)            *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  35   |  0~7  |         |  AMP EG DECAY (bit2~9)             *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  36   |  0~7  |         |  AMP EG SUSTAIN (bit2~9)           *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  37   |  0~7  |         |  AMP EG RELEASE (bit2~9)           *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  38   |  0~7  |         |  EG ATTACK (bit2~9)                *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  39   |  0~7  |         |  EG DECAY (bit2~9)                 *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  40   |  0~7  |         |  EG SUSTAIN (bit2~9)               *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  41   |  0~7  |         |  EG RELEASE (bit2~9)               *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  42   |  0~7  |         |  LFO RATE (bit2~9)              *note P1,P5 |
++-------+-------+---------+---------------------------------------------+
+|  43   |  0~7  |         |  LFO INT (bit2~9)                  *note P1 |
++-------+-------+---------+---------------------------------------------+
+| 44~48 |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  49   |  0~7  |         |  DELAY HI PASS CUTOFF (bit2~9)     *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  50   |  0~7  |         |  DELAY TIME (bit2~9)               *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  51   |  0~7  |         |  DELAY FEEDBACK (bit2~9)           *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  52   |  0~1  |         |  VCO 1 PITCH (bit0~1)           *note P1,P2 |
+|       |  2~3  |         |  VCO 1 SHAPE (bit0~1)              *note P1 |
+|       |  4~5  |  0~3    |  VCO 1 OCTAVE              0~3=16',8',4',2' |
+|       |  6~7  |  0~2    |  VCO 1 WAVE                        *note P6 |
++-------+-------+---------+---------------------------------------------+
+|  53   |  0~1  |         |  VCO 2 PITCH (bit0~1)           *note P1,P2 |
+|       |  2~3  |         |  VCO 2 SHAPE (bit0~1)              *note P1 |
+|       |  4~5  |  0~3    |  VCO 2 OCTAVE              0~3=16',8',4',2' |
+|       |  6~7  |  0~2    |  VCO 2 WAVE                        *note P6 |
++-------+-------+---------+---------------------------------------------+
+|  54   |  0~1  |         |  CROSS MOD DEPTH (bit0~1)          *note P1 |
+|       |  2~3  |         |  VCO 2 PITCH EG INT (bit0~1)    *note P1,P3 |
+|       |  4~5  |         |  VCO 1 LEVEL (bit0~1)              *note P1 |
+|       |  6~7  |         |  VCO 2 LEVEL (bit0~1)              *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  55   |   0   |  0,1    |  SYNC                            0,1=Off,On |
+|       |   1   |  0,1    |  RING                            0,1=Off,On |
+|       |  2~3  |         |  NOISE LEVEL (bit0~1)              *note P1 |
+|       |  4~5  |         |  CUTOFF (bit0~1)                   *note P1 |
+|       |  6~7  |         |  RESONANCE (bit0~1)                *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  56   |  0~1  |         |  CUTOFF EG INT (bit0~1)         *note P1,P4 |
+|       |  2~3  |  0~2    |  CUTOFF VELOCITY                  *note P10 |
+|       |  4~5  |  0~2    |  CUTOFF KEYBOARD TRACK            *note P10 |
+|       |   6   |  0,1    |  CUTOFF TYPE              0,1=2-POLE,4-POLE |
+|       |   7   |  0,1    |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  57   |  0~1  |         |  AMP EG ATTACK (bit0~1)            *note P1 |
+|       |  2~3  |         |  AMP EG DECAY (bit0~1)             *note P1 |
+|       |  4~5  |         |  AMP EG SUSTAIN (bit0~1)           *note P1 |
+|       |  6~7  |         |  AMP EG RELEASE (bit0~1)           *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  58   |  0~1  |         |  EG ATTACK (bit0~1)                *note P1 |
+|       |  2~3  |         |  EG DECAY (bit0~1)                 *note P1 |
+|       |  4~5  |         |  EG SUSTAIN (bit0~1)               *note P1 |
+|       |  6~7  |         |  EG RELEASE (bit0~1)               *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  59   |  0~1  |         |  LFO RATE (bit0~1)              *note P1,P5 |
+|       |  2~3  |         |  LFO INT (bit0~1)                  *note P1 |
+|       |  4~5  |  0~2    |  LFO TARGET                        *note P7 |
+|       |  6~7  |  0~2    |  LFO EG                            *note P8 |
++-------+-------+---------+---------------------------------------------+
+|  60   |  0~1  |  0~2    |  LFO WAVE                          *note P6 |
+|       |  2~5  |         |  Reserved                                   |
+|       |  6~7  |  0~2    |  DELAY OUTPUT ROUTING              *note P9 |
++-------+-------+---------+---------------------------------------------+
+|  61   |  0~7  |  0~128  |  Portament Time          0,1~129=OFF,0~128  |
++-------+-------+---------+---------------------------------------------+
+|  62   |  0~1  |         |  Reserved                                   |
+|       |  2~3  |         |  DELAY HI PASS CUTOFF (bit0~1)     *note P1 |
+|       |  4~5  |         |  DELAY TIME (bit0~1)               *note P1 |
+|       |  6~7  |         |  DELAY FEEDBACK (bit0~1)           *note P1 |
++-------+-------+---------+---------------------------------------------+
+|  63   |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  64   |  0~2  |  0~7    |  VOICE MODE                       *note P11 |
+|       |   3   |         |  Reserved                                   |
+|       |  4~5  |         |  VOICE MODE DEPTH (bit0~1)     *note P1,P12 |
+|       |  6~7  |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  65   |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  66   |  0~3  |  1~12   |  Bend Range (+)                       1~12  |
+|       |  4~7  |  1~12   |  Bend Range (-)                       1~12  |
++-------+-------+---------+---------------------------------------------+
+| 67~68 |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  69   |   0   |  0,1    |  LFO Key Sync                    0,1=Off,On |
+|       |   1   |  0,1    |  LFO BPM Sync                    0,1=Off,On |
+|       |   2   |  0,1    |  LFO Voice Sync                  0,1=Off,On |
+|       |   3   |  0,1    |  Portament BPM                   0,1=Off,On |
+|       |   4   |  0,1    |  Portament Mode                 0,1=Auto,On |
+|       |  5~7  |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  70   |  0~7  |         |  VOICE MODE DEPTH (bit2~9)     *note P1,P12 |
++-------+-------+---------+---------------------------------------------+
+|  71   |  0~7  | 77~127  |  Program Level               77~127=-25~+25 |
++-------+-------+---------+---------------------------------------------+
+|  72   |  0~7  |  0~79   |  Slider Assign                    *note P13 |
++-------+-------+---------+---------------------------------------------+
+|  73   |  0~2  |  0~4    |  KEYBOARD OCTAVE                  0~4=-2~+2 |
++-------+-------+---------+---------------------------------------------+
+| 74~95 |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+| 96~99 |       | ASCII   |  'SEQD'                                     |
++-------+-------+---------+---------------------------------------------+
+|  100  | L:0~7 |100~3000 |  BPM                    100~3000=10.0~300.0 |
+|  101  | H:0~3 |         |                                             |
++-------+-------+---------+---------------------------------------------+
+|  102  |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  103  |       |  1~16   |  Step Length                                |
++-------+-------+---------+---------------------------------------------+
+|  104  |       | -75~+75 |  Swing                                      |
++-------+-------+---------+---------------------------------------------+
+|  105  |       |  0~72   |  Default Gate Time             0~72=0%~100% |
++-------+-------+---------+---------------------------------------------+
+|  106  |       |  0~4    |  Step Resolution                   *note S1 |
++-------+-------+---------+---------------------------------------------+
+|  107  |       |         |  Reserved                                   |
++-------+-------+---------+---------------------------------------------+
+|  108  |   0   |   0,1   |  Step  1 Off/On                  0,1=Off,On |
+|  108  |   1   |   0,1   |  Step  2 Off/On                  0,1=Off,On |
+|  108  |   2   |   0,1   |  Step  3 Off/On                  0,1=Off,On |
+|  108  |   3   |   0,1   |  Step  4 Off/On                  0,1=Off,On |
+|  108  |   4   |   0,1   |  Step  5 Off/On                  0,1=Off,On |
+|  108  |   5   |   0,1   |  Step  6 Off/On                  0,1=Off,On |
+|  108  |   6   |   0,1   |  Step  7 Off/On                  0,1=Off,On |
+|  108  |   7   |   0,1   |  Step  8 Off/On                  0,1=Off,On |
++-------+-------+---------+---------------------------------------------+
+|  109  |   0   |   0,1   |  Step  9 Off/On                  0,1=Off,On |
+|  109  |   1   |   0,1   |  Step 10 Off/On                  0,1=Off,On |
+|  109  |   2   |   0,1   |  Step 11 Off/On                  0,1=Off,On |
+|  109  |   3   |   0,1   |  Step 12 Off/On                  0,1=Off,On |
+|  109  |   4   |   0,1   |  Step 13 Off/On                  0,1=Off,On |
+|  109  |   5   |   0,1   |  Step 14 Off/On                  0,1=Off,On |
+|  109  |   6   |   0,1   |  Step 15 Off/On                  0,1=Off,On |
+|  109  |   7   |   0,1   |  Step 16 Off/On                  0,1=Off,On |
++-------+-------+---------+---------------------------------------------+
+|  110  |       |         |  Step 1~8 Switch                   *note S2 |
++-------+-------+---------+---------------------------------------------+
+|  111  |       |         |  Step 9~16 Switch                  *note S2 |
++-------+-------+---------+---------------------------------------------+
+|112~113|       |         |  Motion Slot 1 Parameter           *note S3 |
++-------+-------+---------+---------------------------------------------+
+|114~115|       |         |  Motion Slot 2 Parameter           *note S3 |
++-------+-------+---------+---------------------------------------------+
+|116~117|       |         |  Motion Slot 3 Parameter           *note S3 |
++-------+-------+---------+---------------------------------------------+
+|118~119|       |         |  Motion Slot 4 Parameter           *note S3 |
++-------+-------+---------+---------------------------------------------+
+|  120  |   0   |         |  Motion Slot 1 Step  1 Off/On    0,1=Off,On |
+|  120  |   1   |         |  Motion Slot 1 Step  2 Off/On    0,1=Off,On |
+|  120  |   2   |         |  Motion Slot 1 Step  3 Off/On    0,1=Off,On |
+|  120  |   3   |         |  Motion Slot 1 Step  4 Off/On    0,1=Off,On |
+|  120  |   4   |         |  Motion Slot 1 Step  5 Off/On    0,1=Off,On |
+|  120  |   5   |         |  Motion Slot 1 Step  6 Off/On    0,1=Off,On |
+|  120  |   6   |         |  Motion Slot 1 Step  7 Off/On    0,1=Off,On |
+|  120  |   7   |         |  Motion Slot 1 Step  8 Off/On    0,1=Off,On |
++-------+-------+---------+---------------------------------------------+
+|  121  |   0   |         |  Motion Slot 1 Step  9 Off/On    0,1=Off,On |
+|  121  |   1   |         |  Motion Slot 1 Step 10 Off/On    0,1=Off,On |
+|  121  |   2   |         |  Motion Slot 1 Step 11 Off/On    0,1=Off,On |
+|  121  |   3   |         |  Motion Slot 1 Step 12 Off/On    0,1=Off,On |
+|  121  |   4   |         |  Motion Slot 1 Step 13 Off/On    0,1=Off,On |
+|  121  |   5   |         |  Motion Slot 1 Step 14 Off/On    0,1=Off,On |
+|  121  |   6   |         |  Motion Slot 1 Step 15 Off/On    0,1=Off,On |
+|  121  |   7   |         |  Motion Slot 1 Step 16 Off/On    0,1=Off,On |
++-------+-------+---------+---------------------------------------------+
+|122~123|       |         |  Motion Slot 2 Step Off/On (same as Slot 1) |
++-------+-------+---------+---------------------------------------------+
+|124~125|       |         |  Motion Slot 3 Step Off/On (same as Slot 1) |
++-------+-------+---------+---------------------------------------------+
+|126~127|       |         |  Motion Slot 4 Step Off/On (same as Slot 1) |
++-------+-------+---------+---------------------------------------------+
+|128~147|       |         |  Step 1 Event Data                 *note S4 |
+|148~167|       |         |  Step 2 Event Data                 *note S4 |
+|   :   |       |         |                                             |
+|   :   |       |         |                                             |
+|428~447|       |         |  Step 16 Event Data                *note S4 |
++-------+-------+---------+---------------------------------------------+
+
+*note P1
+These parameters have the range 0~1023.
+The upper 8bits (b2~9) and lower 2bits (b0~1) are stored separately.
+Below is a table for each parameter.
++----------------------+-------------+------------------------+
+|                      | offset for  | offset for lower 2bits |
+|  Description         | upper 8bits +-----------+------------+
+|                      |             |    Byte   |    Bit     |
++----------------------+-------------+-----------+------------+
+| VCO 1 PITCH          |     20      |     52    |    0~1     |
+| VCO 1 SHAPE          |     21      |     52    |    2~3     |
+| VCO 2 PITCH          |     22      |     53    |    0~1     |
+| VCO 2 SHAPE          |     23      |     53    |    2~3     |
+| CROSS MOD DEPTH      |     24      |     54    |    0~1     |
+| VCO 2 PITCH EG INT   |     25      |     54    |    2~3     |
+| VCO 1 LEVEL          |     26      |     54    |    4~5     |
+| VCO 2 LEVEL          |     27      |     54    |    6~7     |
+| NOISE LEVEL          |     28      |     55    |    2~3     |
+| CUTOFF               |     29      |     55    |    4~5     |
+| RESONANCE            |     30      |     55    |    6~7     |
+| CUTOFF EG INT        |     31      |     56    |    0~1     |
+| AMP EG ATTACK        |     34      |     57    |    0~1     |
+| AMP EG DECAY         |     35      |     57    |    2~3     |
+| AMP EG SUSTAIN       |     36      |     57    |    4~5     |
+| AMP EG RELEASE       |     37      |     57    |    6~7     |
+| AMP ATTACK           |     38      |     58    |    0~1     |
+| AMP DECAY            |     39      |     58    |    2~3     |
+| AMP SUSTAIN          |     40      |     58    |    4~5     |
+| AMP RELEASE          |     41      |     59    |    6~7     |
+| LFO RATE             |     42      |     60    |    0~1     |
+| LFO INT              |     43      |     60    |    2~3     |
+| DELAY HI PASS CUTOFF |     49      |     62    |    2~3     |
+| DELAY TIME           |     50      |     62    |    4~5     |
+| DELAY FEEDBACK       |     51      |     62    |    6~7     |
+| VOICE MODE DEPTH     |     70      |     64    |    4~5     |
++----------------------+-------------+-----------+------------+
+
+
+*note P2 (VCO1/2 PITCH)
+    0    ~    4 : -1200 (Cent)
+    4    ~  356 : -1200 ~ -256 (Cent)
+    356  ~  476 :  -256 ~  -16 (Cent)
+    476  ~  492 :   -16 ~    0 (Cent)
+    492  ~  532 :     0 (Cent)
+    532  ~  548 :     0 ~   16 (Cent)
+    548  ~  668 :    16 ~  256 (Cent)
+    668  ~ 1020 :   256 ~ 1200 (Cent)
+    1020 ~ 1023 :  1200 (Cent)
+
+*note P3 (VCO 2 PITCH EG Int)
+    0    ~    4 : -4800 (Cent)
+    4    ~  356 : -4800 ~ -1024 (Cent)
+    356  ~  476 : -1024 ~   -64 (Cent)
+    476  ~  492 :   -64 ~     0 (Cent)
+    492  ~  532 :     0 (Cent)
+    532  ~  548 :     0 ~    64 (Cent)
+    548  ~  668 :    64 ~  1024 (Cent)
+    668  ~ 1020 :   256 ~  1200 (Cent)
+    1020 ~ 1023 :  1200 (Cent)
+
+*note P4 (CUTOFF EG INT)
+    0   ~ 11   : -100 (%)
+    11  ~ 492  : - ((492 - value) * (492 - value) * 4641 * 100) / 0x40000000 (%)
+    492 ~ 532  : 0 (%)
+    532 ~ 1013 : ((value - 532) * (value - 532) * 4641 * 100) / 0x40000000 (%)
+    1013~1023  : 100 (%)
+
+*note P5 (LFO RATE)
+ [BPM SYNC OFF]
+     0 ~ 1023  : 0 ~ 1023 
+ [BPM SYNC ON]
+     0 ~   63  : 4
+    64 ~  127  : 2
+   128 ~  191  : 1
+   192 ~  255  : 3/4
+   256 ~  319  : 1/2
+   320 ~  383  : 3/8
+   384 ~  447  : 1/3
+   448 ~  511  : 1/4
+   512 ~  575  : 3/16
+   576 ~  639  : 1/6
+   640 ~  703  : 1/8
+   704 ~  767  : 1/12
+   768 ~  831  : 1/16
+   832 ~  895  : 1/24
+   896 ~  959  : 1/32
+   960 ~ 1023  : 1/36
+
+*note P6 (VCO1 WAVE, VCO2 WAVE, LFO WAVE)
+    0 : SQR
+    1 : TRI
+    2 : SAW
+
+*note P7 (LFO TARGET)
+    0 : CUTOFF
+    1 : SHAPE
+    2 : PITCH
+
+*note P8 (LFO EG)
+    0 : OFF
+    1 : RATE
+    2 : INT
+
+*note P9 (DELAY OUTPUT ROUTING)
+    0 : BYPASS
+    1 : PRE FILTER
+    2 : POST FILTER
+
+*note P10 (CUTOFF VELOCITY, CUTOFF KEYBOARD TRACK)
+    0 :   0%
+    1 :  50%
+    2 : 100%
+
+*note P11 (VOICE MODE)
+    0 : POLY
+    1 : DUO
+    2 : UNISON
+    3 : MONO
+    4 : CHORD
+    5 : DELAY
+    6 : ARP
+    7 : SIDECHAIN
+
+*note P12 (VOICE MODE DEPTH)
+ [POLY]
+    0 ~ 1023 : Invert 0~8
+ [DUO],[UNISON]
+    0 ~ 1023 : Detune 0 Cent ~ 50 Cent
+ [MONO]
+    0 ~ 1023 : Sub 0~1023
+ [CHORD]
+    0 ~   73 : 5th
+   74 ~  146 : sus2
+  147 ~  219 : m
+  220 ~  292 : Maj
+  293 ~  365 : sus4
+  366 ~  438 : m7
+  439 ~  511 : 7
+  512 ~  585 : 7sus4
+  586 ~  658 : Maj7
+  659 ~  731 : aug
+  732 ~  804 : dim
+  805 ~  877 : m7b5
+  878 ~  950 : mMaj7
+  951 ~ 1023 : Maj7b5
+ [DELAY]
+    0 ~   85 : 1/192
+   86 ~  170 : 1/128
+  171 ~  255 : 1/64
+  256 ~  341 : 1/48
+  342 ~  426 : 1/32
+  427 ~  511 : 1/24
+  521 ~  597 : 1/16
+  598 ~  682 : 1/12
+  683 ~  767 : 1/8
+  768 ~  853 : 1/6
+  854 ~  938 : 3/16
+  939 ~ 1023 : 1/4
+ [ARP]
+    0 ~   78 : MANUAL 1
+   79 ~  157 : MANUAL 2
+  158 ~  236 : RISE 1
+  237 ~  315 : RISE 2
+  316 ~  393 : FALL 1
+  394 ~  472 : FALL 2
+  473 ~  551 : RISE FALL 1
+  552 ~  630 : RISE FALL 2
+  631 ~  708 : POLY 1
+  709 ~  787 : POLY 2
+  788 ~  866 : RANDOM 1
+  867 ~  945 : RANDOM 2
+  946 ~ 1023 : RANDOM 3
+ [SIDECHAIN]
+    0 ~ 1023 : 0~1023
+
+*note P13 (Slider Assign)
+    0 : PITCH BEND
+    1 : GATE TIME
+    2 : VCO 1 PITCH
+    3 : VCO 1 SHAPE
+    4 : VCO 2 PITCH
+    5 : VCO 2 SHAPE
+    6 : CROSS MOD DEPTH
+    7 : VCO 2 PITCH EG INT
+    8 : VCO 1 LEVEL
+    9 : VCO 2 LEVEL
+   10 : NOISE LEVEL
+   11 : CUTOFF
+   12 : RESONANCE
+   13 : FILTER EG INT
+   14 : AMP EG ATTACK
+   15 : AMP EG DECAY
+   16 : AMP EG SUSTAIN
+   17 : AMP EG RELEASE
+   18 : EG ATTACK
+   19 : EG DECAY
+   20 : EG SUSTAIN
+   21 : EH RELEASE
+   22 : LFO RATE
+   23 : LFO INT
+   24 : DELAY HI PASS CUTOFF
+   25 : DELAY TIME
+   26 : DELAY FEEDBACK
+   27 : Portament Time
+   28 : VOICE MODE DEPTH
+
+
+*note S1 (Step Resolution)
+    0 : 1/16
+    1 : 1/8
+    2 : 1/4
+    3 : 1/2
+    4 : 1/1
+
+*note S2 (Step Switch)
+Set this to 0xff when sending to minilogue.
+
+*note S3 (Motion Slot Parameter)
++-------+-------+---------+----------------------------------------------+
+| Offset|  Bit  |  Range  |  Description                                 |
++-------+-------+---------+----------------------------------------------+
+|   0   |   0   |   0,1   | Motion Off/On                     0,1=Off,On |
+|   0   |   1   |   0,1   | Smooth Off/On                     0,1=Off,On |
+|   0   |  2~6  |         | Reserved                                     |
+|   1   |       |         | Parameter ID                      *note S3-1 |
++-------+-------+---------+----------------------------------------------+
+
+*note S3-1 (Motion Parameter ID)
+
+    0 : None
+   17 : VCO 1 PITCH
+   18 : VCO 1 SHAPE
+   19 : VCO 1 OCTAVE
+   20 : VCO 1 OCTAVE
+   21 : VCO 2 PITCH
+   22 : VCO 1 SHAPE
+   23 : VCO 1 OCTAVE
+   24 : VCO 1 OCTAVE
+   25 : CROSS MOD
+   26 : PITCH EG INT
+   27 : SYNC
+   28 : RING
+   29 : VCO 1 LEVEL
+   30 : VCO 2 LEVEL
+   31 : NOISE LEVEL
+   32 : CUTOFF
+   33 : RESONANCE
+   34 : CUTOFF EG INT
+   35 : CUTOFF VELOCITY TRACK
+   36 : CUTOFF KEYBOARD TRACK
+   37 : CUTOFF TYPE
+   40 : AMP EG ATTACK
+   41 : AMP EG DECAY
+   42 : AMP EG SUSTAIN
+   43 : AMP EG RELEASE
+   44 : EG ATTACK
+   45 : EG DECAY
+   46 : EG SUSTAIN
+   47 : EG RELEASE
+   48 : LFO RATE
+   49 : LFO INT
+   50 : LFO TARGET
+   51 : LFO EG
+   52 : LFO TYPE
+   53 : DELAY OUTPUT ROUTING
+   55 : DELAY HI PASS CUTOFF
+   56 : DELAY TIME
+   57 : DELAY FEEDBACK
+   61 : PITCH BEND
+   62 : GATE TIME
+
+*note S4 (Step Event Data)
++-------+-------+---------+----------------------------------------------+
+| Offset|  Bit  |  Range  |  Description                                 |
++-------+-------+---------+----------------------------------------------+
+|   0   |       |  0~127  | Note No (1)                           0~127  |
++-------+-------+---------+----------------------------------------------+
+|   1   |       |  0~127  | Note No (2)                           0~127  |
++-------+-------+---------+----------------------------------------------+
+|   2   |       |  0~127  | Note No (3)                           0~127  |
++-------+-------+---------+----------------------------------------------+
+|   3   |       |  0~127  | Note No (4)                           0~127  |
++-------+-------+---------+----------------------------------------------+
+|   4   |       |  0~127  | Velocity No (1) 0,1~127=NoEvent,Velocity1~127|
++-------+-------+---------+----------------------------------------------+
+|   5   |       |  0~127  | Velocity No (2) 0,1~127=NoEvent,Velocity1~127|
++-------+-------+---------+----------------------------------------------+
+|   6   |       |  0~127  | Velocity No (3) 0,1~127=NoEvent,Velocity1~127|
++-------+-------+---------+----------------------------------------------+
+|   7   |       |  0~127  | Velocity No (4) 0,1~127=NoEvent,Velocity1~127|
++-------+-------+---------+----------------------------------------------+
+|   8   |  0-6  |  0~127  | Gate time (1)        0~72,73~127=0%~100%,TIE |
+|   8   |   7   |   0,1   | Trigger switch (1)    0,1=Off,On  *ntoe S4-1 |
++-------+-------+---------+----------------------------------------------+
+|   9   |  0-6  |  0~127  | Gate time (2)        0~72,73~127=0%~100%,TIE |
+|   9   |   7   |   0,1   | Trigger switch (2)    0,1=Off,On  *ntoe S4-1 |
++-------+-------+---------+----------------------------------------------+
+|  10   |  0-6  |  0~127  | Gate time (3)        0~72,73~127=0%~100%,TIE |
+|  10   |   7   |   0,1   | Trigger switch (3)    0,1=Off,On  *ntoe S4-1 |
++-------+-------+---------+----------------------------------------------+
+|  11   |  0-6  |  0~127  | Gate time (4)        0~72,73~127=0%~100%,TIE |
+|  11   |   7   |   0,1   | Trigger switch (4)    0,1=Off,On  *ntoe S4-1 |
++-------+-------+---------+----------------------------------------------+
+|  12   |       |  0~255  | Motion Slot 1 Data 1        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  13   |       |  0~255  | Motion Slot 1 Data 2        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  14   |       |  0~255  | Motion Slot 2 Data 1        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  15   |       |  0~255  | Motion Slot 2 Data 2        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  16   |       |  0~255  | Motion Slot 3 Data 1        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  17   |       |  0~255  | Motion Slot 3 Data 2        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  18   |       |  0~255  | Motion Slot 4 Data 1        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+|  19   |       |  0~255  | Motion Slot 4 Data 2        0~255 *note S4-2 |
++-------+-------+---------+----------------------------------------------+
+
+*note S4-1 (Gate Time)
+If the gate time is set to TIE(73~127) and the Trigger Switch for the next
+step is set to 0, the sound will continue into the next step.
+
+*note S4-2 (Motion Data)
+Only Data1 is used if Smooth is Off or is the parameter is a switch type
+parameter.
+When Smooth is On, a value interpolated between Data1 and Data2 is played
+back during the step.
+
+
+
+
