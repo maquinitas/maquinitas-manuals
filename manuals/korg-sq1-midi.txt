@@ -1,0 +1,146 @@
+
+        SQ-1 MIDI Implementation                   Revision 1.00 (2015.02.27)
+
+1. Transmitted Data ------------------------------------------------------------
+
+1-1 Channel Messages            [H]:Hex,  [D]:Decimal
++---------+---------+----------+-------------------------------------+
+| Status  | Second  |  Third   |    Description  (Transmitted by )   |
+|  [Hex]  | [H] [D] | [H] [D]  |                                     |
++---------+---------+----------+-------------------------------------+
+|   9n    | kk (kk) | 00  (00) | Note Off                         *1 |
+|   9n    | kk (kk) | 40  (64) | Note On                          *1 |
++---------+---------+----------+-------------------------------------+
+ n  : MIDI Channel = 0~15
+ kk : 48 ~ 108
+ *1 :This message is transmitted when the SQ-1 works as a clock master.
+
+
+1-2 SYSTEM REALTIME MESSAGES
++---------+------------------------------------------------+
+|Status[H]|                Description                     |
++---------+------------------------------------------------+
+|   F8    | Timing Clock                                *2 |
+|   FA    | Start                                       *2 |
+|   FC    | Stop                                        *2 |
+|   FE    | Active Sensing                                 |
++---------+------------------------------------------------+
+ *2 :This message is transmitted when the SQ-1 works as a clock master.
+
+
+1-3 Universal System Exclusive Message ( Non Realtime )
+
+ Device Inquiry Reply
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7E    | Non Realtime Message                           |
+|   0g    | Global MIDI Channel  ( Device ID )             |
+|   06    | General Information                            |
+|   02    | Identity Reply                                 |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   31    | Software Project     ( Family ID   (LSB))      |
+|   01    |                      ( Family ID   (MSB))      |
+|   00    |                      ( Member ID   (LSB))      |
+|   00    |                      ( Member ID   (MSB))      |
+|   xx    |                      ( Minor Ver.  (LSB))      |
+|   xx    |                      ( Minor Ver.  (MSB))      |
+|   xx    |                      ( Major Ver.  (LSB))      |
+|   xx    |                      ( Major Ver.  (MSB))      |
+|   F7    | End Of Exclusive                               |
++---------+------------------------------------------------+
+  This message is transmitted whenever an Inquiry Message Request is received.
+
+
+1-4 Search Device Message
+
+ Search Device Reply
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   50    | Search Device                                  |
+|   01    | Reply                                          |
+|   0g    | gggg: MIDI Global Channel  ( Device ID )       |
+|   dd    | Echo Back ID                                   |
+|   31    | SQ-1 ID              ( Family ID   (LSB))      |
+|   01    | SQ-1 ID              ( Family ID   (MSB))      |
+|   00    | SQ-1 Member ID       ( Member ID   (LSB))      |
+|   00    | SQ-1 Member ID       ( Member ID   (MSB))      |
+|   xx    |                      ( Minor Ver.  (LSB))      |
+|   xx    |                      ( Minor Ver.  (MSB))      |
+|   xx    |                      ( Major Ver.  (LSB))      |
+|   xx    |                      ( Major Ver.  (MSB))      |
+|   F7    | End Of Exclusive                               |
++---------+------------------------------------------------+
+  g  : MIDI Global Channel = 0 ~ F
+  dd : Echo Back ID = copy from SEARCH DEVICE REQUEST message.
+
+  This message is transmitted whenever a SEARCH DEVICE REQUEST is received.
+
+
+
+2. Recognized Receive Data -----------------------------------------------------
+
+2-1 Channel Messages            [H]:Hex,  [D]:Decimal
++---------+---------+----------+-------------------------------------+
+| Status  | Second  |  Third   |           Description               |
+| [Hex]   | [H] [D] | [H] [D]  |                                     |
++---------+---------+----------+-------------------------------------+
+|   8n    | kk (kk) | vv  (vv) | Note Off    vv=0~127                |
+|   9n    | kk (kk) | 00  (00) | Note Off                            |
+|   9n    | kk (kk) | vv  (vv) | Note On     vv=1~127                |
+|   Bn    | 78(120) | 00  (00) | All Sound Off                       |
+|   Bn    | 7B(123) | 00  (00) | All Note Off                        |
++---------+---------+----------+-------------------------------------+
+ n  : MIDI Channel = 0~15
+
+
+2-2 SYSTEM REALTIME MESSAGES
++---------+------------------------------------------------+
+|Status[H]|                Description                     |
++---------+------------------------------------------------+
+|   F8    | Timing Clock                                *3 |
+|   FA    | Start                                       *3 |
+|   FC    | Stop                                        *3 |
+|   FE    | Active Sensing                                 |
++---------+------------------------------------------------+
+ *3 :This message is recognized when the "SYNC IN" is not connected.
+
+
+2-3 Universal System Exclusive Message (Non Realtime)
+
+ Inquiry Message Request
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   7E    | Non Realtime Message                           |
+|   gg    | Global MIDI Channel                            |
+|   06    | General Information                            |
+|   01    | Identity Request                               |
+|   F7    | End Of Exclusive                               |
++---------+------------------------------------------------+
+ gg = 00~0F :Received if Global Channel
+      7F    :Received on any Channel
+
+
+2-4 Search Device Message
+
+ Search Device Request
++---------+------------------------------------------------+
+| Byte[H] |                Description                     |
++---------+------------------------------------------------+
+|   F0    | Exclusive Status                               |
+|   42    | KORG ID              ( Manufacturers ID )      |
+|   50    | Search Device                                  |
+|   00    | Request                                        |
+|   dd    | Echo Back ID                                   |
+|   F7    | END OF EXCLUSIVE                               |
++---------+------------------------------------------------+
+ Receive this message, and transmits SEARCH DEVICE REPLY message
+ including copied Echo Back ID.
+
+
