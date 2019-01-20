@@ -73,6 +73,8 @@ All manuals for instruments are included as reference material, all copyright be
 * [KORG volca sample 1](/manuals/korg-volca-sample-1-manual.pdf)
 * [KORG volca sample 2](/manuals/korg-volca-sample-2-manual.pdf)
 * [KORG volca sample MIDI PDF](/manuals/korg-volca-sample-midi.pdf)
+* [Line 6 POD HD500X Advanced Guide](/manuals/line6-pod-hd500x-advanced-guide.pdf)
+* [Line 6 POD HD500X Pilot's Guide](/manuals/line6-pod-hd500x-pilots-guide.pdf)
 * [MFB Dominion Club](/manuals/mfb-dominion-club.pdf)
 * [MFB Dominion I](/manuals/mfb-dominion-i-manual.pdf)s
 * [MFB Synth II](/manuals/mfb-synth-ii-manual.pdf)
