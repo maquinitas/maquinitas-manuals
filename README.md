@@ -30,6 +30,7 @@ All manuals for instruments are included as reference material, all copyright be
 * [Cyclone Analogic TT-303 Bass Bot MKI](/manuals/cyclone-analogic-tt-303-bass-bot-mki-manual.pdf)
 * [Dave Smith Instruments Tempest Addendum](/manuals/dave-smith-instruments-tempest-addendum.pdf)
 * [Dave Smith Instruments Tempest](/manuals/dave-smith-instruments-tempest-manual.pdf)
+* [Digitech Whammy DT](/manuals/digitech-whammy-dt-manual.pdf)
 * [Elektron Analog Rytm MKI](/manuals/elektron-analog-rytm-mki-manual.pdf)
 * [Elektron Analog Rytm MKII](/manuals/elektron-analog-rytm-mkii-manual.pdf)
 * [Eventide H9](/manuals/eventide-h9-manual.pdf)
@@ -131,8 +132,11 @@ All manuals for instruments are included as reference material, all copyright be
 * [Roland TR-707](/manuals/roland-tr-707-manual.pdf)
 * [Roland TR-727](/manuals/roland-tr-727-manual.pdf)
 * [Roland TR-909](/manuals/roland-tr-909-manual.pdf)
-* [Roland VP-03 MIDI](/manuals/roland-vp-03-midi.pdf)
 * [Roland VP-03](/manuals/roland-vp-03-manual.pdf)
+* [Roland VP-03 MIDI](/manuals/roland-vp-03-midi.pdf)
+* [Roland VT-4 Block Diagram]((/manuals/roland-vt-4-block-diagram.pdf)
+* [Roland VT-4](/manuals/roland-vt-4-manual.pdf)
+* [Roland VT-4 MIDI]((/manuals/roland-vt-4-midi.pdf)
 * [Strymon BigSky](/manuals/strymon-bigsky-manual.pdf)
 * [Strymon Mobius](/manuals/strymon-mobius-manual.pdf)
 * [Strymon TimeLine](/manuals/strymon-timeline-manual.pdf)
@@ -143,4 +147,5 @@ All manuals for instruments are included as reference material, all copyright be
 * [Yamaha RX7](/manuals/yamaha-rx7-manual.pdf)
 
 ## License
+
 MIT
