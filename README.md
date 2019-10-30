@@ -94,7 +94,7 @@ All manuals for instruments are included as reference material, all copyright be
 * [Line 6 POD HD500X Advanced Guide](/manuals/line6-pod-hd500x-advanced-guide.pdf)
 * [Line 6 POD HD500X Pilot's Guide](/manuals/line6-pod-hd500x-pilots-guide.pdf)
 * [MFB Dominion Club](/manuals/mfb-dominion-club.pdf)
-* [MFB Dominion I](/manuals/mfb-dominion-i-manual.pdf)s
+* [MFB Dominion I](/manuals/mfb-dominion-i-manual.pdf)
 * [MFB Synth II](/manuals/mfb-synth-ii-manual.pdf)
 * [MFB Synth II MIDI](/manuals/mfb-synth-ii-midi.pdf)
 * [MFB Tanzbär 2](/manuals/mfb-tanzbar-2-manual.pdf)
