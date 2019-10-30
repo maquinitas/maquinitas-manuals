@@ -6,7 +6,7 @@ All manuals for instruments are included as reference material, all copyright be
 
 ## Index
 
-[A](./A) [B](./B) 
+[A](###A) [B](#B) 
 
 ## List of manuals
 
