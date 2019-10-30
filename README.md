@@ -6,6 +6,8 @@ All manuals for instruments are included as reference material, all copyright be
 
 ## List of manuals
 
+### A
+
 * [Alesis SR-16 Getting Started](/manuals/alesis-sr-16-getting-started.pdf)
 * [Alesis SR-16](/manuals/alesis-sr-16-manual.pdf)
 * [Alesis SR-16 Product Overview](/manuals/alesis-sr-16-product-overview.pdf)
@@ -18,6 +20,9 @@ All manuals for instruments are included as reference material, all copyright be
 * [Arturia MiniBrute 2](/manuals/arturia-minibrute-2-manual.pdf)
 * [Arturia MiniBrute 2S](/manuals/arturia-minibrute-2s-manual.pdf)
 * [Arturia MiniBrute](/manuals/arturia-minibrute-manual.pdf)
+
+### B
+
 * [Bastl microGranny 2](/manuals/bastl-microgranny-2-manual.pdf)
 * [Bastl microgranny 2 MIDI](/manuals/bastl-microgranny-2-midi.pdf)
 * [Bastl Thyme Long Manual](/manuals/bastl-thyme-long-manual.pdf)
