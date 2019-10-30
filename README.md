@@ -4,6 +4,10 @@
 
 All manuals for instruments are included as reference material, all copyright belongs to whoever has it, these manuals are included just for reference purposes.
 
+## Index
+
+[A](/A) [B](/B) 
+
 ## List of manuals
 
 ### A
