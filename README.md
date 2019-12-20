@@ -140,6 +140,9 @@ All manuals for instruments are included as reference material, all copyright be
 
 ### M
 
+* [Meeblip Anode LE Quickstart Guide](/manuals/meeblip-anode-le-quickstart-guide.pdf)
+* [Meeblip Anode Quickstart Guide](/manuals/meeblip-anode-quickstart-guide.pdf)
+* [Meeblip Triode Quickstart Guide](/manuals/meeblip-triode-quickstart-guide.pdf)
 * [MFB Dominion Club](/manuals/mfb-dominion-club.pdf)
 * [MFB Dominion I](/manuals/mfb-dominion-i-manual.pdf)
 * [MFB Synth II](/manuals/mfb-synth-ii-manual.pdf)
