@@ -2,7 +2,7 @@
 
 ## About
 
-All manuals for instruments are included as reference material, all copyright belongs to whoever has it, these manuals are included just for reference purposes.
+All manuals in this repository are included as reference material, all copyright belongs to whoever has it.
 
 ## Index
 
@@ -95,6 +95,9 @@ All manuals for instruments are included as reference material, all copyright be
 
 * [KORG microKORG](/manuals/korg-microkorg-manual.pdf)
 * [KORG microKORG MIDI](/manuals/korg-microkorg-midi.txt)
+* [KORG microKORG S](/manuals/korg-microkorg-s-manual.pdf)
+* [KORG microKORG S](/manuals/korg-microkorg-s-quick-start.pdf)
+* [KORG microKORG S](/manuals/korg-microkorg-s-voice-name-list.pdf)
 * [KORG minilogue](/manuals/korg-minilogue-manual.pdf)
 * [KORG minilogue MIDI](/manuals/korg-minilogue-midi.txt)
 * [KORG monologue MIDI](/manuals/korg-monologue-midi.txt)
